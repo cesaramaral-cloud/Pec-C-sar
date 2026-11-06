@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OLISP 2026 – Painel de Ensino</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#EBEFF5;--card:#fff;--ink:#14213D;--mut:#5E6B85;--line:#DCE2EC;--ind:#3347B0;--teal:#0E8F83;--gold:#D49A12;--silver:#8493A8;--bronze:#B5683A;--rad:18px;--hd:'Bricolage Grotesque','Segoe UI',sans-serif;--bd:'Instrument Sans','Segoe UI',sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0C1222;--card:#151E36;--ink:#E8EDF8;--mut:#98A5C3;--line:#243152;--ind:#7C8DFF;--teal:#2FC4B5;--gold:#F0B73A;--silver:#A3B1C8;--bronze:#D98A58;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#0C1222;--card:#151E36;--ink:#E8EDF8;--mut:#98A5C3;--line:#243152;--ind:#7C8DFF;--teal:#2FC4B5;--gold:#F0B73A;--silver:#A3B1C8;--bronze:#D98A58;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 var(--bd)}
+button{font:inherit;color:inherit;cursor:pointer}:focus-visible{outline:2px solid var(--ind);outline-offset:2px}
+main{max-width:1280px;margin:0 auto;padding:24px 20px 40px;display:grid;gap:16px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between}
+h1{font:700 clamp(28px,4vw,44px)/1 var(--hd);margin:0;letter-spacing:-.03em}header p{margin:6px 0 0;color:var(--mut)}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 14px;font-weight:600}.btn:hover{border-color:var(--ind)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:16px}
+h2{font:600 15px var(--hd);margin:0 0 2px}.sub{color:var(--mut);font-size:12px;margin:0 0 10px}
+.bar{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center}.grp{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.grp>b{font-size:12px;color:var(--mut);font-weight:500;margin-right:2px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;font-size:13px}.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.x{background:var(--ind);color:#fff;border-color:var(--ind)}
+.ins{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.ins div{border-left:4px solid var(--c);padding:4px 0 4px 12px;font-size:14px}.ins strong{font-family:var(--hd)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(176px,1fr));gap:12px}
+.kpi{position:relative;overflow:hidden}.kpi .l{display:flex;align-items:center;gap:8px;color:var(--mut);font-weight:500}.kpi .l i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.kpi .v{font:700 40px/1.1 var(--hd);letter-spacing:-.03em;margin:6px 0 2px}.kpi svg{display:block;width:100%;height:44px;margin-top:6px}
+.d{font-size:12px;font-weight:600}.up{color:var(--teal)}.dn{color:#D6455D}.gauge{height:52px!important}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.s7{grid-column:span 7}.s5{grid-column:span 5}.s6{grid-column:span 6}.s12{grid-column:span 12}
+@media(max-width:900px){.s7,.s5,.s6{grid-column:span 12}}
+.hb{display:grid;grid-template-columns:150px 1fr 54px;gap:8px;align-items:center;margin:5px 0;font-size:12.5px;width:100%;background:none;border:0;padding:2px 0;text-align:left}
+.hb span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hb .t{height:14px;border-radius:7px;background:var(--line);overflow:hidden}.hb .t u{display:block;height:100%;border-radius:7px;text-decoration:none}.hb b{text-align:right;font-family:var(--hd)}.hb.off{opacity:.35}
+.hb.big{grid-template-columns:70px 1fr 90px;font-size:14px}.hb.big .t{height:20px;border-radius:10px}
+.don{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.don svg{width:190px;flex:none}.don ul{list-style:none;margin:0;padding:0;flex:1;min-width:150px}
+.don li button{display:flex;gap:8px;align-items:center;width:100%;background:none;border:0;padding:3px 0;font-size:12.5px;text-align:left}.don li i{width:10px;height:10px;border-radius:3px;flex:none}.don li em{margin-left:auto;font-style:normal;font-weight:600}
+.tw{max-height:380px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+th{position:sticky;top:0;background:var(--card);cursor:pointer;color:var(--mut);font-weight:600}tbody tr{cursor:pointer}tbody tr:hover,tr.sel{background:color-mix(in srgb,var(--ind) 12%,transparent)}
+.drop{position:fixed;inset:0;background:color-mix(in srgb,var(--ind) 85%,#000);color:#fff;display:none;place-items:center;font:700 28px var(--hd);z-index:9}.drop.on{display:grid}
+.empty{color:var(--mut);padding:30px;text-align:center}svg text{fill:var(--mut);font-size:10px;font-family:var(--bd)}
+</style></head><body>
+<main>
+<header><div><h1>OLISP 2026</h1><p id="meta">Painel comercial da diretoria de Ensino</p></div>
+<div class="grp"><button class="btn" id="up">Carregar planilha .xlsx</button><input type="file" id="fi" accept=".xlsx,.xls" hidden></div></header>
+<section class="card bar" id="filters"></section>
+<section class="card ins" id="ins"></section>
+<section class="kpis" id="kpis"></section>
+<section class="grid">
+<div class="card s7"><h2>Alunos por escola</h2><p class="sub">Escolas em ordem decrescente. Linha tracejada: média geral por escola (a planilha não traz o ano anterior).</p><div id="c1"></div></div>
+<div class="card s5"><h2>Total com acompanhante</h2><p class="sub">Alunos × 2 + professor olímpico. Quanto mais escura a barra, maior o volume.</p><div id="c2"></div></div>
+<div class="card s6"><h2>Participação das escolas</h2><p class="sub">Maiores escolas no total de alunos.</p><div id="c3"></div></div>
+<div class="card s6"><h2>Alunos por período</h2><p class="sub">Clique para filtrar o período.</p><div id="c4"></div></div>
+<div class="card s12"><h2>Escolas</h2><p class="sub">Clique no cabeçalho para ordenar e na linha para filtrar a escola.</p><div class="tw" id="tb"></div></div>
+</section></main>
+<div class="drop" id="drop">Solte a planilha para atualizar o painel</div>
+<script>
+const RAW=[["MANHÃ", "ACCACIO DE VASCONCELLOS", 2, 1, 10, 1], ["MANHÃ", "ALTAMIR GONCALVES", 3, 18, 19, 1], ["MANHÃ", "ANTONIA LUCCHESI", 0, 0, 6, 1], ["MANHÃ", "ANTONIO CORDEIRO", 1, 2, 17, 1], ["MANHÃ", "ANTONIO MIGUEL", 0, 2, 12, 1], ["MANHÃ", "ARQUIMNIO MARQUES DA SILVA", 2, 2, 24, 1], ["MANHÃ", "BRIGADEIRO TOBIAS", 19, 18, 25, 2], ["MANHÃ", "DIOGENES ALMEIDA MARINS", 2, 2, 2, 1], ["MANHÃ", "ELZA SALVESTRO", 2, 5, 7, 1], ["MANHÃ", "ELZIDE CELESTINA", 2, 3, 13, 1], ["MANHÃ", "ESCOLASTICA DE ALMEIDA", 4, 8, 22, 1], ["MANHÃ", "EZEQUIEL MACHADO", 6, 10, 19, 1], ["MANHÃ", "FERNANDA CAMARGO", 0, 2, 6, 1], ["MANHÃ", "FLAVIO GAGLIARDI", 0, 9, 4, 1], ["MANHÃ", "FRANCISCO EUPHRASIO", 0, 3, 15, 1], ["MANHÃ", "GENESIO MACHADO", 2, 1, 14, 1], ["MANHÃ", "GENEZIA IZABEL CARDOSO", 3, 13, 26, 1], ["MANHÃ", "GUMERCINDO GONCALVES", 0, 0, 5, 1], ["MANHÃ", "HELIO DEL CISTIA", 5, 18, 31, 2], ["MANHÃ", "IDA YOLANDA", 1, 1, 2, 1], ["MANHÃ", "IZABEL RODRIGUES GALVÃO", 1, 1, 1, 1], ["MANHÃ", "JOÃO CLIMACO DE CAMARGO", 3, 2, 17, 1], ["MANHÃ", "JOÃO MACHADO DE ARAUJO", 1, 0, 1, 1], ["MANHÃ", "JORDINA DO AMARAL ARRUDA", 0, 5, 1, 1], ["MANHÃ", "JOSE ODIN", 3, 11, 19, 1], ["MANHÃ", "JOSE REGINATO", 5, 6, 12, 1], ["MANHÃ", "JOSE ROQUE", 3, 3, 17, 1], ["MANHÃ", "MARIA CANDIDA DE BARROS", 0, 1, 7, 1], ["MANHÃ", "MARINA GROHMANN", 0, 1, 5, 1], ["MANHÃ", "MARIO GUILHERME NOTARI", 2, 3, 3, 1], ["MANHÃ", "NAZIRA NAGIB JORGE", 0, 1, 4, 1], ["MANHÃ", "REVERENDO OVIDIO", 1, 3, 5, 1], ["MANHÃ", "VISCONDE DE PORTO SEGURO", 7, 9, 20, 1], ["MANHÃ", "RAFAEL ORSI FILHO", 2, 4, 19, 1], ["MANHÃ", "RENATO SENECA DE AS FLEURY", 2, 4, 19, 1], ["MANHÃ", "ROBERTO PASCHOALICK", 0, 2, 8, 1], ["MANHÃ", "ROQUE CONCEIÇÃO", 2, 6, 8, 1], ["MANHÃ", "SENADOR VERGUEIRO", 3, 2, 5, 1], ["MANHÃ", "WANDA COSTA DAHER", 1, 1, 7, 1], ["TARDE", "AGGEO PEREIRA DO AMARAL", 11, 22, 43, 2], ["TARDE", "ANA CECILIA MARTINS", 4, 14, 25, 2], ["TARDE", "ARTHUR CYRILLO", 1, 7, 21, 1], ["TARDE", "DIONYSIO VIEIRA", 2, 10, 10, 2], ["TARDE", "DULCE ESMERALDA", 3, 9, 35, 2], ["TARDE", "FRANCISCO CAMARGO CESAR", 2, 5, 15, 2], ["TARDE", "GERALDO ESPIRITO SANTO", 7, 21, 34, 2], ["TARDE", "GUALBERTO MOREIRA", 4, 10, 28, 2], ["TARDE", "HUMBERTO DE CAMPOS", 4, 6, 9, 2], ["TARDE", "JOÃO RODRIGUES BUENO", 2, 3, 15, 2], ["TARDE", "JOAQUIM IZIDORO MARINS", 8, 10, 23, 1], ["TARDE", "JULIA RIOS ATHAYDE", 1, 11, 15, 1], ["TARDE", "JULIO BIERRENBACH", 4, 9, 23, 2], ["TARDE", "JULIO PRESTES", 4, 9, 29, 1], ["TARDE", "LAURO SANCHES", 5, 12, 30, 2], ["TARDE", "LUIZ GONZAGA DE CAMARGO", 10, 16, 30, 1], ["TARDE", "LUIZ NOGUEIRA MARTINS SENADOR", 3, 12, 16, 1], ["TARDE", "MARCO ANTONIO MENCACCI", 4, 12, 25, 2], ["TARDE", "MARIA HELENA GAZZI", 2, 6, 25, 2], ["TARDE", "MARIA ONDINA ANDRADE", 4, 18, 27, 2], ["TARDE", "MONSENHOR JOÃO SOARES", 0, 1, 13, 2], ["TARDE", "OSSIS SALVESTRINI", 4, 9, 14, 1], ["TARDE", "ROSEMARY DE MELLO", 11, 17, 23, 2], ["TARDE", "WILSON RAMOS BRANDÃO", 6, 7, 12, 1], ["NOITE", "ANTONIO PADILHA", 10, 21, 59, 2], ["NOITE", "ANTONIO VIEIRA", 9, 26, 36, 2], ["NOITE", "BEATHRIS CAIXEIRO", 3, 16, 26, 2], ["NOITE", "FRANCISCO COCCARO", 7, 18, 23, 2], ["NOITE", "GUIOMAR CAMOLESI", 11, 24, 49, 2], ["NOITE", "ISABEL LOPES MONTERIO", 3, 10, 24, 2], ["NOITE", "JORGE MADUREIRA", 1, 2, 13, 1], ["NOITE", "JOSE QUEVEDO", 14, 21, 52, 2], ["NOITE", "MONTEIRO LOBATO", 1, 2, 16, 1], ["NOITE", "SARAH SALVESTRO", 7, 15, 31, 2], ["NOITE", "ZELIA DULCE DE CAMPOS", 6, 12, 34, 2]];
+const $=s=>document.querySelector(s),fmt=n=>Math.round(n).toLocaleString('pt-BR'),sum=(a,k)=>a.reduce((x,r)=>x+r[k],0);
+const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase();
+const PN=p=>({MANHA:'Manhã',TARDE:'Tarde',NOITE:'Noite'}[norm(p)]||p);
+const MED=[['o','Ouro','--gold'],['pr','Prata','--silver'],['b','Bronze','--bronze']],SEGS=['Grande','Médio','Pequeno'];
+const PAL=['#3347B0','#0E8F83','#D49A12','#B5683A','#8493A8','#C2478B','#6FA8DC','#9AA5B8'];
+let rows=[],pers=[],S,sort={k:'a',d:-1};
+function load(arr){rows=arr.map(([p,e,o,pr,b,f])=>{const a=o+pr+b;return{p:norm(p),e,o,pr,b,f,a,t:a*2+f,s:a>=50?'Grande':a>=20?'Médio':'Pequeno'}});
+pers=[...new Set(rows.map(r=>r.p))];S={per:new Set,med:new Set,seg:new Set,esc:new Set};render()}
+const filt=(skip)=>rows.filter(r=>(skip=='per'||!S.per.size||S.per.has(r.p))&&(!S.seg.size||S.seg.has(r.s))&&(!S.esc.size||S.esc.has(r.e))&&(!S.med.size||[...S.med].some(m=>r[m]>0)));
+const tog=(set,v)=>set.has(v)?set.delete(v):set.add(v);
+function chip(cls,k,v,t){return`<button class="chip ${cls}" data-k="${k}" data-v="${encodeURIComponent(v)}">${t}</button>`}
+function filters(){const sh=(l,c)=>`<button class="chip ${c?'on':''}" data-k="short" data-v="${l}">${l}</button>`,a=S.per;
+const same=(...p)=>a.size==p.length&&p.every(x=>a.has(x));
+$('#filters').innerHTML=`<div class="grp"><b>Período</b>${sh('Todos',!a.size)}${pers.map(p=>sh(PN(p),same(p))).join('')}${pers.length>2?sh('Manhã + Tarde',same('MANHA','TARDE')):''}</div>
+<div class="grp"><b>Medalha</b>${MED.map(m=>chip(S.med.has(m[0])?'on':'','med',m[0],m[1])).join('')}</div>
+<div class="grp"><b>Porte</b>${SEGS.map(s=>chip(S.seg.has(s)?'on':'','seg',s,s)).join('')}</div>
+${[...S.esc].map(e=>chip('x','esc',e,e.length>26?e.slice(0,25)+'…  ✕':e+'  ✕')).join('')}
+<button class="btn" data-k="clear" style="margin-left:auto">Limpar filtros</button>`}
+function insights(f){if(!f.length){$('#ins').innerHTML='<div class="empty" style="grid-column:1/-1">Nenhuma escola com esses filtros.</div>';return}
+const A=sum(f,'a'),by=pers.map(p=>[p,sum(f.filter(r=>r.p==p),'a')]).sort((x,y)=>y[1]-x[1]),top=[...f].sort((x,y)=>y.a-x.a),n5=Math.min(5,top.length),c5=sum(top.slice(0,n5),'a')/A;
+const sg=f.filter(r=>!r.o).length,pp=A/sum(f,'f'),one=f.filter(r=>r.a/r.f>=30).length;
+$('#ins').innerHTML=`<div style="--c:var(--ind)"><strong>${PN(by[0][0])} lidera:</strong> ${fmt(by[0][1])} alunos, ${Math.round(by[0][1]/A*100)}% da seleção.</div>
+<div style="--c:var(--gold)"><strong>Onde crescer:</strong> ${sg} de ${f.length} escolas não têm nenhuma medalha de ouro. ${top[0].e.toLowerCase().replace(/(^|\s)\S/g,c=>c.toUpperCase())} concentra sozinha ${Math.round(top[0].a/A*100)}% dos alunos.</div>
+<div style="--c:#D6455D"><strong>Atenção à margem:</strong> as ${n5} maiores escolas somam ${Math.round(c5*100)}% dos alunos e ${one} escolas têm 30 ou mais alunos por professor (média: ${pp.toFixed(1).replace('.',',')}).</div>`}
+function spark(v,c){const m=Math.max(...v,1),n=v.length,x=i=>n>1?i*100/(n-1):50,y=u=>40-u/m*34,p=v.map((u,i)=>x(i)+','+y(u)).join(' ');
+return`<svg viewBox="0 0 100 44" preserveAspectRatio="none"><polygon points="0,44 ${p} 100,44" fill="var(${c})" opacity=".15"/><polyline points="${p}" fill="none" stroke="var(${c})" stroke-width="2.2" vector-effect="non-scaling-stroke"/></svg>`}
+function kpis(f){const D=[...MED.map(m=>[m[0],m[1],m[2]]),['a','Total de alunos','--ind'],['t','Total c/ acompanhante','--teal'],['f','Professores olímpicos','--mut']];
+$('#kpis').innerHTML=D.map(([k,l,c])=>{const v=sum(f,k),base=sum(rows,k)/rows.length,dl=f.length&&base?(v/f.length)/base-1:0,
+vis=k=='a'?`<svg class="gauge" viewBox="0 0 100 54"><path d="M10 50A40 40 0 0 1 90 50" pathLength="100" fill="none" stroke="var(--line)" stroke-width="9" stroke-linecap="round"/><path d="M10 50A40 40 0 0 1 90 50" pathLength="100" fill="none" stroke="var(${c})" stroke-width="9" stroke-linecap="round" stroke-dasharray="${v/sum(rows,'a')*100} 100"/><text x="50" y="48" text-anchor="middle" style="font-size:14px;font-weight:700;fill:var(--ink)">${Math.round(v/sum(rows,'a')*100)}%</text></svg>`:spark(pers.map(p=>sum(f.filter(r=>r.p==p),k)),c);
+return`<div class="card kpi" style="--c:var(${c})"><div class="l"><i></i>${l}</div><div class="v">${fmt(v)}</div><span class="d ${dl<0?'dn':'up'}">${dl<0?'▼':'▲'} ${Math.abs(dl*100).toFixed(1).replace('.',',')}% vs. média por escola</span>${vis}</div>`}).join('')}
+const esc=e=>encodeURIComponent(e);
+function area(f){if(!f.length)return $('#c1').innerHTML='<div class="empty">Sem dados</div>';
+const d=[...f].sort((a,b)=>b.a-a.a),W=640,H=250,pl=34,pb=18,pt=10,n=d.length,mx=Math.max(...d.map(r=>r.a)),x=i=>pl+(n>1?i*(W-pl-10)/(n-1):(W-pl)/2),y=v=>H-pb-v/mx*(H-pb-pt),
+ln=d.map((r,i)=>x(i)+','+y(r.a)).join(' '),mean=sum(rows,'a')/rows.length;
+$('#c1').innerHTML=`<svg viewBox="0 0 ${W} ${H}"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--ind)" stop-opacity=".55"/><stop offset="1" stop-color="var(--ind)" stop-opacity="0"/></linearGradient></defs>
+${[0,.5,1].map(t=>`<line x1="${pl}" x2="${W}" y1="${y(mx*t)}" y2="${y(mx*t)}" stroke="var(--line)"/><text x="${pl-6}" y="${y(mx*t)+3}" text-anchor="end">${Math.round(mx*t)}</text>`).join('')}
+<polygon points="${x(0)},${H-pb} ${ln} ${x(n-1)},${H-pb}" fill="url(#g)"/><polyline points="${ln}" fill="none" stroke="var(--ind)" stroke-width="2.5"/>
+<line x1="${pl}" x2="${W}" y1="${y(mean)}" y2="${y(mean)}" stroke="var(--gold)" stroke-width="2" stroke-dasharray="6 5"/><text x="${W}" y="${y(mean)-5}" text-anchor="end">média ${Math.round(mean)}</text>
+${d.map((r,i)=>`<circle cx="${x(i)}" cy="${y(r.a)}" r="${S.esc.has(r.e)?6:3.5}" fill="var(--card)" stroke="var(--ind)" stroke-width="2" style="cursor:pointer" data-k="esc" data-v="${esc(r.e)}"><title>${r.e}: ${r.a} alunos</title></circle>`).join('')}</svg>`}
+function bars(f){const d=[...f].sort((a,b)=>b.t-a.t).slice(0,10),m=d[0]?.t||1;
+$('#c2').innerHTML=d.map(r=>`<button class="hb" data-k="esc" data-v="${esc(r.e)}" title="${r.e}"><span>${r.e}</span><span class="t"><u style="width:${r.t/m*100}%;background:color-mix(in srgb,var(--teal) ${25+75*r.t/m}%,var(--card))"></u></span><b>${r.t}</b></button>`).join('')||'<div class="empty">Sem dados</div>'}
+function donut(f){const d=[...f].sort((a,b)=>b.a-a.a),T=sum(f,'a'),top=d.slice(0,7),oth=T-sum(top,'a');let cum=0;
+const sl=top.map((r,i)=>({n:r.e,v:r.a,c:PAL[i],k:1}));if(oth>0)sl.push({n:'Outras escolas',v:oth,c:PAL[7]});
+if(!T)return $('#c3').innerHTML='<div class="empty">Sem dados</div>';
+$('#c3').innerHTML=`<div class="don"><svg viewBox="0 0 42 42">${sl.map(s=>{const p=s.v/T*100,o=25-cum;cum+=p;return`<circle cx="21" cy="21" r="15.9155" fill="none" stroke="${s.c}" stroke-width="6" stroke-dasharray="${p} ${100-p}" stroke-dashoffset="${o}" ${s.k?`style="cursor:pointer" data-k="esc" data-v="${esc(s.n)}"`:''}><title>${s.n}: ${s.v}</title></circle>`}).join('')}<text x="21" y="22" text-anchor="middle" style="font:700 7px var(--hd);fill:var(--ink)">${fmt(T)}</text><text x="21" y="27" text-anchor="middle" style="font-size:3px">alunos</text></svg>
+<ul>${sl.map(s=>`<li><button ${s.k?`data-k="esc" data-v="${esc(s.n)}"`:'disabled'}><i style="background:${s.c}"></i><span>${s.n.length>24?s.n.slice(0,23)+'…':s.n}</span><em>${Math.round(s.v/T*100)}%</em></button></li>`).join('')}</ul></div>`}
+function prog(){const f=filt('per'),m=Math.max(...pers.map(p=>sum(f.filter(r=>r.p==p),'a')),1);
+$('#c4').innerHTML=pers.map((p,i)=>{const v=sum(f.filter(r=>r.p==p),'a'),T=sum(f,'a');return`<button class="hb big ${S.per.size&&!S.per.has(p)?'off':''}" data-k="per" data-v="${p}"><span>${PN(p)}</span><span class="t"><u style="width:${v/m*100}%;background:${PAL[i%7]}"></u></span><b>${fmt(v)} <small style="font-weight:500;color:var(--mut)">${T?Math.round(v/T*100):0}%</small></b></button>`}).join('')}
+function table(f){const C=[['e','Escola'],['p','Período'],['o','Ouro'],['pr','Prata'],['b','Bronze'],['a','Total de alunos'],['f','Prof.'],['t','Total c/ acomp.']],d=[...f].sort((x,y)=>(x[sort.k]>y[sort.k]?1:x[sort.k]<y[sort.k]?-1:0)*sort.d);
+$('#tb').innerHTML=`<table><thead><tr>${C.map(c=>`<th data-k="sort" data-v="${c[0]}">${c[1]}${sort.k==c[0]?(sort.d>0?' ▲':' ▼'):''}</th>`).join('')}</tr></thead><tbody>${d.map(r=>`<tr class="${S.esc.has(r.e)?'sel':''}" data-k="esc" data-v="${esc(r.e)}"><td>${r.e}</td><td>${PN(r.p)}</td><td>${r.o}</td><td>${r.pr}</td><td>${r.b}</td><td><b>${r.a}</b></td><td>${r.f}</td><td><b>${r.t}</b></td></tr>`).join('')}</tbody><tfoot><tr><td><b>Total</b></td><td></td><td>${sum(f,'o')}</td><td>${sum(f,'pr')}</td><td>${sum(f,'b')}</td><td><b>${fmt(sum(f,'a'))}</b></td><td>${sum(f,'f')}</td><td><b>${fmt(sum(f,'t'))}</b></td></tr></tfoot></table>`}
+function render(){const f=filt();$('#meta').textContent=`Painel comercial da diretoria de Ensino: ${f.length} de ${rows.length} escolas na seleção`;filters();insights(f);kpis(f);area(f);bars(f);donut(f);prog();table(f)}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-k]');if(!t)return;const k=t.dataset.k,v=decodeURIComponent(t.dataset.v||'');
+if(k=='clear'){S.per.clear();S.med.clear();S.seg.clear();S.esc.clear()}
+else if(k=='short'){S.per.clear();({'Manhã':['MANHA'],'Tarde':['TARDE'],'Noite':['NOITE'],'Manhã + Tarde':['MANHA','TARDE']}[v]||[]).forEach(p=>S.per.add(p))}
+else if(k=='sort'){sort={k:v,d:sort.k==v?-sort.d:(v=='e'||v=='p'?1:-1)}}
+else tog(S[k],v);render()});
+function parse(buf){const wb=XLSX.read(buf),ws=wb.Sheets.TODOS||wb.Sheets[wb.SheetNames[0]],a=XLSX.utils.sheet_to_json(ws,{header:1,raw:true}),hi=a.findIndex(r=>r.some(c=>norm(c)=='ESCOLA'));
+if(hi<0)return alert('Não encontrei a coluna ESCOLA. Use o mesmo formato da aba TODOS.');
+const h=a[hi].map(norm),ix=n=>h.findIndex(c=>c.includes(n)),c={p:ix('PERIODO'),e:ix('ESCOLA'),o:ix('OURO'),pr:ix('PRATA'),b:ix('BRONZE'),f:ix('PROFESSOR')},num=v=>typeof v=='number'?v:parseFloat(v)||0;
+const out=a.slice(hi+1).filter(r=>typeof r[c.e]=='string'&&r[c.e].trim()&&norm(r[c.p])!='TOTAL'&&num(r[c.o])+num(r[c.pr])+num(r[c.b])>0).map(r=>[String(r[c.p]),r[c.e].trim().replace(/\s+/g,' '),num(r[c.o]),num(r[c.pr]),num(r[c.b]),num(r[c.f])]);
+if(!out.length)return alert('Nenhuma linha válida encontrada.');load(out)}
+const rd=f=>f&&f.arrayBuffer().then(parse);
+$('#up').onclick=()=>$('#fi').click();$('#fi').onchange=e=>rd(e.target.files[0]);
+let dc=0;addEventListener('dragenter',e=>{e.preventDefault();dc++;$('#drop').classList.add('on')});addEventListener('dragleave',()=>{if(--dc<=0)$('#drop').classList.remove('on')});
+addEventListener('dragover',e=>e.preventDefault());addEventListener('drop',e=>{e.preventDefault();dc=0;$('#drop').classList.remove('on');rd(e.dataTransfer.files[0])});
+load(RAW);
+</script></body></html>
